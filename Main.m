@@ -1,8 +1,9 @@
 %% ASEN 3802 - Aerodynamics Lab - Main
-% 
+% Determine effect of thickness and camber on lift 
+%
 % Author: Shayna Brower
 % Collaborators: Adam Cobb, Luca Lungeanu, Ingrid Paska
-% Date created: 2/27/26  Date revised: 4/6/26
+% Date created: 2/27/26  Date revised: 4/8/26
 
 clear;
 clc;
@@ -166,8 +167,68 @@ lift_slope_thin_airfoil = p_thin_airfoil(1);
 
 %% Task 4
 
+NACA_2412 = [2,4,12];
+NACA_4412 = [4,4,12];
 
+% call NACA Airfoils using same N from task 2 and 3 NACA 0012 is solved in task 3
+[x_b_2412,y_b_2412] = NACA_Airfoils(NACA_2412,1,N_3,'NACA 2412',0);
+[x_b_4412,y_b_4412] = NACA_Airfoils(NACA_4412,1,N_3,'NACA 4412',0);
 
+% call vortex panel for 2412 and 4412 using same range angle of attack from task 3 cl_0012 is the same as in task 3
+for i=1:length(angle_of_attack)
+    cl_2412(i) = Vortex_Panel(x_b_2412,y_b_2412,1,angle_of_attack(i));
+    cl_4412(i) = Vortex_Panel(x_b_4412,y_b_4412,1,angle_of_attack(i));
+end
+
+% Thin airfoil theory
+[zero_lift_aoa_TAT_0012,lift_slope_TAT_0012,cl_TAT_0012] = ThinAirfoilTheory(NACA_0012,1,angle_of_attack);
+[zero_lift_aoa_TAT_2412,lift_slope_TAT_2412,cl_TAT_2412] = ThinAirfoilTheory(NACA_2412,1,angle_of_attack);
+[zero_lift_aoa_TAT_4412,lift_slope_TAT_4412,cl_TAT_4412] = ThinAirfoilTheory(NACA_4412,1,angle_of_attack);
+
+% Experimental data from NACA charts and digitizer
+data_2412 = readmatrix("NACA2412_exp.txt");
+data_4412 = readmatrix("NACA4412_exp.txt");
+
+figure;
+plot(angle_of_attack,cl_0012_task3,'LineWidth',1.4,'Color','c');
+hold on;
+plot(data_0012(:,1),data_0012(:,2),':o','Color','#6495ED');
+plot(angle_of_attack,cl_TAT_0012,'--b','LineWidth',1.2);
+plot(angle_of_attack,cl_2412,'LineWidth',1.4,'Color','m');
+plot(data_2412(:,1),data_2412(:,2),':o','Color','#FF1493');
+plot(angle_of_attack,cl_TAT_2412,'--r','LineWidth',1.4);
+plot(angle_of_attack,cl_4412,'LineWidth',1,'Color','y');
+plot(data_4412(:,1),data_4412(:,2),':o','Color',"#B8860B");
+plot(angle_of_attack,cl_TAT_4412,'--','LineWidth',1.2,'Color','#FFA500');
+grid on;
+legend("NACA 0012 Vortex Panel","NACA 0012 Experimental",'NACA 0012 Thin Airfoil',"NACA 2412 Vortex Panel","NACA 2412 Experimental",'NACA 2412 Thin Airfoil',"NACA 4412 Vortex Panel","NACA 4412 Experimental",'NACA 4412 Thin Airfoil',"Location","southeast");
+xlabel("Angle of Attack (degrees)");
+ylabel("Lift Coefficient");
+title("Lift Coefficient vs Angle of Attack for Airfoils of Various Amounts of Camber");
+print("camber comparison","-dpng",'-r300');
+
+% solve for zero lift aoa with interpolation
+zero_lift_aoa_vortex_2412 = interp1(cl_2412,angle_of_attack,0);
+zero_lift_aoa_vortex_4412 = interp1(cl_4412,angle_of_attack,0);
+zero_lift_aoa_experimental_2412 = interp1(data_2412(:,2),data_2412(:,1),0);
+zero_lift_aoa_experimental_4412 = interp1(data_4412(1:16,2),data_4412(1:16,1),0);
+
+% solve for lift slope per degree using polyfit
+% slope for linear region (-8* <= aoa <= 8*) for experimental data
+idx_exp_2412 = (data_2412(:,1) >= -8) & (data_2412(:,1) <= 8);
+idx_exp_4412 = (data_4412(:,1) >= -8) & (data_4412(:,1) <= 8);
+
+p_vortex_2412 = polyfit(angle_of_attack,cl_2412,1);
+lift_slope_vortex_2412 = p_vortex_2412(1);
+
+p_vortex_4412 = polyfit(angle_of_attack,cl_4412,1);
+lift_slope_vortex_4412 = p_vortex_4412(1);
+
+p_exp_2412 = polyfit(data_2412(idx_exp_2412,1),data_2412(idx_exp_2412,2),1);
+lift_slope_exp_2421 = p_exp_2412(1);
+
+p_exp_4412 = polyfit(data_4412(idx_exp_4412,1),data_4412(idx_exp_4412,2),1);
+lift_slope_exp_4412 = p_exp_4412(1);
 
 
 
@@ -235,7 +296,7 @@ end
 % plot airfoil
 if plot_on_off == 1
     figure;
-    plot(x_b,y_b,'LineWidth',1.5);
+    plot(x_b,y_b,'-*','LineWidth',1.5);
     hold on;
     axis equal;
     grid on;
@@ -249,5 +310,60 @@ if plot_on_off == 1
     xlabel('Chord Position');
     ylabel('Thickness');
 end
+
+end
+
+
+
+
+
+function [zero_lift_angle_of_attack,lift_slope_per_degree,cl] = ThinAirfoilTheory(NACA, c, alpha_deg)
+%THINAIRFOILTHEORY solve for cl given angle of attack using thin airfoil theory
+%
+% Author: Shayna Brower
+% Collaborators: Adam Cobb, Luca Lungeanu, Ingrid Paska
+% Date created: 4/8/26  Date revised: 4/8/26
+
+m = NACA(1)/100;
+p = NACA(2)/10;
+
+alpha_rad = deg2rad(alpha_deg);
+
+% symmetric airfoil
+if (m == 0) && (p ==0)
+    zero_lift_angle_of_attack = 0; %degrees
+    cl = 2*pi*alpha_rad;
+    P = polyfit(alpha_deg,cl,1);
+    lift_slope_per_degree = P(1);
+    return;
+end
+
+
+% cambered airfoil
+theta = linspace(0,pi,2000);
+x = (c/2) * (1-cos(theta));
+
+for i = 1:length(x)
+    if (p ~= 0)
+        if (x(i) >= 0) && (x(i) < (p*c))
+            dyc_dx(i) = ((2*m)/(p^2))*(p - (x(i)/c));
+        else
+            dyc_dx(i) = ((2*m)/(1-p)^2)*(p - (x(i)/c));
+        end
+    end
+end
+
+% Thin airfoil theory zero-lift angle in radians
+zero_lift_angle_of_attack_rad = -(1/pi) * trapz(theta, dyc_dx .* (cos(theta) - 1));
+
+% Convert to degrees
+zero_lift_angle_of_attack = rad2deg(zero_lift_angle_of_attack_rad); %degrees
+
+% Build lift curve
+cl = 2*pi*(alpha_rad - zero_lift_angle_of_attack_rad);
+
+% lift slope
+P = polyfit(alpha_deg,cl,1);
+lift_slope_per_degree = P(1);
 
 end
