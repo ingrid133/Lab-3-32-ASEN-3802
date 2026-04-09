@@ -106,7 +106,6 @@ for i=1:length(angle_of_attack)
     cl_0018(i) = Vortex_Panel(x_b_0018,y_b_0018,1,angle_of_attack(i));
 end
 
-
 % Thin airfoil theory
 % dz/dx = 0 since all three are not cambered airfoils, so cl = 2*pi*angle of attack
 % cl slope is the same for all three airfoils 
@@ -132,7 +131,43 @@ legend("NACA 0006 Vortex Panel","NACA 0006 Experimental","NACA 0012 Vortex Panel
 xlabel("Angle of Attack (degrees)");
 ylabel("Lift Coefficient");
 title("Lift Coefficient vs Angle of Attack for Airfoils of Various Thickness");
-print("thickness comparison","-dpng",'-r300');
+%print("thickness comparison","-dpng",'-r300');
+
+% solve for zero lift aoa with interpolation
+zero_lift_aoa_vortex_0006 = interp1(cl_0006,angle_of_attack,0);
+zero_lift_aoa_vortex_0012 = interp1(cl_0012_task3,angle_of_attack,0);
+zero_lift_aoa_vortex_0018 = interp1(cl_0018,angle_of_attack,0);
+zero_lift_aoa_experimental_0006 = interp1(data_0006(:,2),data_0006(:,1),0);
+zero_lift_aoa_experimental_0012 = interp1(data_0012(:,2),data_0012(:,1),0);
+
+% solve for lift slope per degree using polyfit
+% slope for linear region (-8* <= aoa <= 8*) for experimental data
+idx_exp_0006 = (data_0006(:,1) >= -8) & (data_0006(:,1) <= 8);
+idx_exp_0012 = (data_0012(:,1) >= -8) & (data_0012(:,1) <= 8);
+
+p_vortex_0006 = polyfit(angle_of_attack,cl_0006,1);
+lift_slope_vortex_0006 = p_vortex_0006(1);
+
+p_vortex_0012 = polyfit(angle_of_attack,cl_0012_task3,1);
+lift_slope_vortex_0012 = p_vortex_0012(1);
+
+p_vortex_0018 = polyfit(angle_of_attack,cl_0018,1);
+lift_slope_vortex_0018 = p_vortex_0018(1);
+
+p_exp_0006 = polyfit(data_0006(idx_exp_0006,1),data_0006(idx_exp_0006,2),1);
+lift_slope_exp_0006 = p_exp_0006(1);
+
+p_exp_0012 = polyfit(data_0012(idx_exp_0012,1),data_0012(idx_exp_0012,2),1);
+lift_slope_exp_0012 = p_exp_0012(1);
+
+p_thin_airfoil = polyfit(angle_of_attack,cl_thin_airfoil,1);
+lift_slope_thin_airfoil = p_thin_airfoil(1);
+
+
+%% Task 4
+
+
+
 
 
 
