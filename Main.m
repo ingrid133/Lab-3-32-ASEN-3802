@@ -207,7 +207,7 @@ ylabel("Lift Coefficient");
 title("Lift Coefficient vs Angle of Attack for Airfoils of Various Amounts of Camber");
 print("camber comparison","-dpng",'-r300');
 
-% solve for zero lift aoa with interpolation
+% solve for zero lift aoa with interpolation 0012 is solved in task 3
 zero_lift_aoa_vortex_2412 = interp1(cl_2412,angle_of_attack,0);
 zero_lift_aoa_vortex_4412 = interp1(cl_4412,angle_of_attack,0);
 zero_lift_aoa_experimental_2412 = interp1(data_2412(:,2),data_2412(:,1),0);
@@ -225,12 +225,63 @@ p_vortex_4412 = polyfit(angle_of_attack,cl_4412,1);
 lift_slope_vortex_4412 = p_vortex_4412(1);
 
 p_exp_2412 = polyfit(data_2412(idx_exp_2412,1),data_2412(idx_exp_2412,2),1);
-lift_slope_exp_2421 = p_exp_2412(1);
+lift_slope_exp_2412 = p_exp_2412(1);
 
 p_exp_4412 = polyfit(data_4412(idx_exp_4412,1),data_4412(idx_exp_4412,2),1);
 lift_slope_exp_4412 = p_exp_4412(1);
 
 
+%% Part 2 Task 1
+
+N_part2 = 50;
+b = 10; %ft
+a0_r = 2*pi; % /rad
+a0_t = 2*pi; % /rad
+aero_r = 0;  % deg
+aero_t = 0;  % deg
+geo_r = 5;   % deg
+geo_t = 5;   % deg
+
+AR = [4,6,8,10]; % AR values from fig 5.20
+taper_ratio = linspace(0,1,1000);
+
+
+% use for loops to solve for ct/cr vs induced drag factor for each AR
+for i=1:length(AR)
+    Aspect_ratio = AR(i);
+
+    for j=1:length(taper_ratio)
+        ct_cr = taper_ratio(j);
+        
+        % solve for c_r and c_t to input into fuction 
+        c_r = 2*b/(Aspect_ratio*(1+ct_cr));
+        c_t = ct_cr*c_r;
+        
+        % call PLLT function for each c_r and c_t
+        [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N_part2);
+        
+        % solve for induced drag factor
+        delta(j,i) = (1/e) - 1;
+    end
+end
+
+% reproduce figure 5.20
+figure;
+for i=1:length(AR)
+    plot(taper_ratio,delta(:,i),'LineWidth',1.5);
+    hold on;
+end
+xlabel('Taper ratio, ct/cr');
+ylabel('\delta');
+legend('AR = 4', 'AR = 6','AR = 8', 'AR = 10',"Location",'best');
+%print('5_20 plot','-dpng','-r300');
+
+
+
+
+
+
+%% Functions
 
 function [x_b,y_b] = NACA_Airfoils(NACA,c,N,title_name,plot_on_off)
 % NACA_AIRFOILS create a plot of boundary points for NACA airfoils
@@ -365,5 +416,78 @@ cl = 2*pi*(alpha_rad - zero_lift_angle_of_attack_rad);
 % lift slope
 P = polyfit(alpha_deg,cl,1);
 lift_slope_per_degree = P(1);
+
+end
+
+
+
+function [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N)
+%e is the span efficiency factor (to be computed and returned)
+%C_L is the coefficient of lift (to be computed and returned)
+%C_Di is the induced coefficient of drag (to be computed and returned)
+%b is the span (in feet
+%a0_t is the cross-sectional lift slope at the tips (per radian)
+%a0_r is the cross-sectional lift slope at the root (per radian)
+%c_t is the chord at the tips (in feet)
+%c_r is the chord at the root (in feet)
+%aero_t is the zero-lift angle of attack at the tips (in degrees)
+%aero_r is the zero-lift angle of attack at the root (in degrees)
+%geo_t is the geometric angle of attack at the tips (in degrees)
+%geo_r is the geometric angle of attack at the root (in degrees)
+%N is the number of odd terms to include in the series expansion for circulation
+% 
+% Author: Ingrid Paska
+% Collaborators: Adam Cobb, Luca Lungeanu, Shayna Brower
+% Date created: 4/10/26
+
+%calc terms
+S= b*(c_r + c_t)/2;
+AR= b^2/S;
+A_matrix = zeros(N,N);
+RHS = zeros(N,1);
+
+%need be in rad or will interp wrong
+aero_t= (pi/180)*aero_t;
+aero_r= (pi/180)*aero_r;
+geo_t = (pi/180)*geo_t;
+geo_r=(pi/180)*geo_r;
+
+%theta loop for the diff theta
+theta = zeros(N,1);
+for i= 1:N
+    theta(i)= (i*pi)/(2*N);
+end
+
+for i= 1:N
+    frac = cos(theta(i));
+    c=c_r +(c_t-c_r)*frac;
+    a0=a0_r +(a0_t- a0_r)*frac;
+    alp_L0= aero_r+ (aero_t-aero_r)*frac;
+    alp = geo_r +(geo_t-geo_r)*frac;
+    RHS(i)= alp-alp_L0;
+    for j=1:N
+        n=2*j -1;
+        A_matrix(i,j)= (4*b/(a0*c))*sin(n*theta(i))+ n*sin(theta(i)*n)/sin(theta(i));
+
+    end
+
+end
+
+% Fourier coefficients
+A = A_matrix\RHS;
+
+% Lift coefficient
+c_L= pi*AR*A(1);
+
+% Induced drag coefficient
+sum=0;
+for j =1:N
+    n=2*j -1;
+    sum = sum +n*(A(j)^2);
+end
+c_Di =pi*AR*sum;
+
+% span efficiency factor
+e =(c_L^2)/(pi*AR*c_Di);
 
 end
