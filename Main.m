@@ -135,11 +135,11 @@ title("Lift Coefficient vs Angle of Attack for Airfoils of Various Thickness");
 %print("thickness comparison","-dpng",'-r300');
 
 % solve for zero lift aoa with interpolation
-zero_lift_aoa_vortex_0006 = interp1(cl_0006,angle_of_attack,0);
-zero_lift_aoa_vortex_0012 = interp1(cl_0012_task3,angle_of_attack,0);
-zero_lift_aoa_vortex_0018 = interp1(cl_0018,angle_of_attack,0);
-zero_lift_aoa_experimental_0006 = interp1(data_0006(:,2),data_0006(:,1),0);
-zero_lift_aoa_experimental_0012 = interp1(data_0012(:,2),data_0012(:,1),0);
+zero_lift_aoa_vortex_0006 = interp1(cl_0006,angle_of_attack,0); % degrees
+zero_lift_aoa_vortex_0012 = interp1(cl_0012_task3,angle_of_attack,0); % degrees
+zero_lift_aoa_vortex_0018 = interp1(cl_0018,angle_of_attack,0); % degrees
+zero_lift_aoa_experimental_0006 = interp1(data_0006(:,2),data_0006(:,1),0); % degrees
+zero_lift_aoa_experimental_0012 = interp1(data_0012(:,2),data_0012(:,1),0); % degrees
 
 % solve for lift slope per degree using polyfit
 % slope for linear region (-8* <= aoa <= 8*) for experimental data
@@ -147,22 +147,22 @@ idx_exp_0006 = (data_0006(:,1) >= -8) & (data_0006(:,1) <= 8);
 idx_exp_0012 = (data_0012(:,1) >= -8) & (data_0012(:,1) <= 8);
 
 p_vortex_0006 = polyfit(angle_of_attack,cl_0006,1);
-lift_slope_vortex_0006 = p_vortex_0006(1);
+lift_slope_vortex_0006 = p_vortex_0006(1); % /degree
 
-p_vortex_0012 = polyfit(angle_of_attack,cl_0012_task3,1);
-lift_slope_vortex_0012 = p_vortex_0012(1);
+p_vortex_0012 = polyfit(angle_of_attack,cl_0012_task3,1); 
+lift_slope_vortex_0012 = p_vortex_0012(1); % /degree
 
 p_vortex_0018 = polyfit(angle_of_attack,cl_0018,1);
-lift_slope_vortex_0018 = p_vortex_0018(1);
+lift_slope_vortex_0018 = p_vortex_0018(1); % /degree
 
 p_exp_0006 = polyfit(data_0006(idx_exp_0006,1),data_0006(idx_exp_0006,2),1);
-lift_slope_exp_0006 = p_exp_0006(1);
+lift_slope_exp_0006 = p_exp_0006(1); % /degree
 
 p_exp_0012 = polyfit(data_0012(idx_exp_0012,1),data_0012(idx_exp_0012,2),1);
-lift_slope_exp_0012 = p_exp_0012(1);
+lift_slope_exp_0012 = p_exp_0012(1); % /degree
 
 p_thin_airfoil = polyfit(angle_of_attack,cl_thin_airfoil,1);
-lift_slope_thin_airfoil = p_thin_airfoil(1);
+lift_slope_thin_airfoil = p_thin_airfoil(1); % /degree
 
 
 %% Task 4
@@ -205,13 +205,13 @@ legend("NACA 0012 Vortex Panel","NACA 0012 Experimental",'NACA 0012 Thin Airfoil
 xlabel("Angle of Attack (degrees)");
 ylabel("Lift Coefficient");
 title("Lift Coefficient vs Angle of Attack for Airfoils of Various Amounts of Camber");
-print("camber comparison","-dpng",'-r300');
+%print("camber comparison","-dpng",'-r300');
 
 % solve for zero lift aoa with interpolation 0012 is solved in task 3
-zero_lift_aoa_vortex_2412 = interp1(cl_2412,angle_of_attack,0);
-zero_lift_aoa_vortex_4412 = interp1(cl_4412,angle_of_attack,0);
-zero_lift_aoa_experimental_2412 = interp1(data_2412(:,2),data_2412(:,1),0);
-zero_lift_aoa_experimental_4412 = interp1(data_4412(1:16,2),data_4412(1:16,1),0);
+zero_lift_aoa_vortex_2412 = interp1(cl_2412,angle_of_attack,0); % degrees
+zero_lift_aoa_vortex_4412 = interp1(cl_4412,angle_of_attack,0); % degrees
+zero_lift_aoa_experimental_2412 = interp1(data_2412(:,2),data_2412(:,1),0); % degrees
+zero_lift_aoa_experimental_4412 = interp1(data_4412(1:16,2),data_4412(1:16,1),0); % degrees
 
 % solve for lift slope per degree using polyfit
 % slope for linear region (-8* <= aoa <= 8*) for experimental data
@@ -219,16 +219,16 @@ idx_exp_2412 = (data_2412(:,1) >= -8) & (data_2412(:,1) <= 8);
 idx_exp_4412 = (data_4412(:,1) >= -8) & (data_4412(:,1) <= 8);
 
 p_vortex_2412 = polyfit(angle_of_attack,cl_2412,1);
-lift_slope_vortex_2412 = p_vortex_2412(1);
+lift_slope_vortex_2412 = p_vortex_2412(1); % /degree
 
 p_vortex_4412 = polyfit(angle_of_attack,cl_4412,1);
-lift_slope_vortex_4412 = p_vortex_4412(1);
+lift_slope_vortex_4412 = p_vortex_4412(1); % /degree
 
 p_exp_2412 = polyfit(data_2412(idx_exp_2412,1),data_2412(idx_exp_2412,2),1);
-lift_slope_exp_2412 = p_exp_2412(1);
+lift_slope_exp_2412 = p_exp_2412(1); % /degree
 
 p_exp_4412 = polyfit(data_4412(idx_exp_4412,1),data_4412(idx_exp_4412,2),1);
-lift_slope_exp_4412 = p_exp_4412(1);
+lift_slope_exp_4412 = p_exp_4412(1); % /degree
 
 
 %% Part 2 Task 1
@@ -276,218 +276,123 @@ ylabel('\delta');
 legend('AR = 4', 'AR = 6','AR = 8', 'AR = 10',"Location",'best');
 %print('5_20 plot','-dpng','-r300');
 
+%% Part 3
 
+% givens
+aoa_3 = 4; % degrees
+b_3 = 400/12; %ft
+cr_3 = 64/12; %ft
+ct_3 = 44.5/12; %ft
+geo_r_3 = aoa_3 + 1; %degree 
+geo_t_3 = aoa_3 + 0; %degree 
+a0_r_3 = (lift_slope_vortex_2412*180)/pi; % /rad NACA 2412
+a0_t_3 = (lift_slope_vortex_0012*180)/pi; % /rad NACA 0012
+aero_r_3 = zero_lift_aoa_vortex_2412;  % deg NACA 2412
+aero_t_3 = zero_lift_aoa_vortex_0012;  % deg NACA 0012
 
+N_ref_part_3 = 600;
+N_part3 = 1:1:N_ref_part_3;
 
+% solve for CL and CDi at a large N for reference for convergence study
+[e_3_ref_3,c_L_ref_3,c_Di_ref_3] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_ref_part_3);
 
+% solve for CL error values
+CL_10_percent = 0.1*c_L_ref_3;
+CL_1_percent = 0.01*c_L_ref_3;
+CL_1_tenth_percent = 0.001*c_L_ref_3;
 
-%% Functions
-
-function [x_b,y_b] = NACA_Airfoils(NACA,c,N,title_name,plot_on_off)
-% NACA_AIRFOILS create a plot of boundary points for NACA airfoils
-% Using vortex panel method solve for and plot the x and y locations of 
-% the boundary points for a given 4-digit NACA airfoil
-%
-% Author: Shayna Brower
-% Collaborators: Adam Cobb, Luca Lungeanu, Ingrid Paska
-% Date created: 2/27/26  Date revised: 4/6/26
-
-% Task 1
-
-% solve for m, p, and t given an NACA airfoil 
-m = NACA(1)/100;
-p = NACA(2)/10;
-t = NACA(3)/100;
-
-% use vortex panel method for x locations
-beta = linspace(0,pi,N);
-x = (c/2)*(1 - cos(beta));
-
-% solve for thickness distribution 
-y_t = ((t*c)/.2) * ( (.2969.*sqrt(x./c)) - (.1260.*(x./c)) - (.3516.*((x./c).^2)) + (.2843.*((x./c).^3))  - (.1036.*((x./c).^4)));
-
-% solve for y values for mean camber line and derivative of camber line with respect to x if given a cambered airfoil
-y_c = zeros(1,N);
-dyc_dx = zeros(1,N);
-for i=1:N
-    if (p ~= 0)
-        if (x(i) >= 0) && (x(i) < (p*c))
-            y_c(i) = m*(x(i)/(p^2))*((2*p) - (x(i)/c));
-            dyc_dx(i) = ((2*m)/(p^2))*(p - (x(i)/c));
-        else
-            y_c(i) = m*((c-x(i))/((1-p)^2))*( 1 + (x(i)/c) - (2*p));
-            dyc_dx(i) = ((2*m)/(1-p)^2)*(p - (x(i)/c));
-        end
+% find number of terms for 10 percent error in CL
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    if (c_L_part3(a) >= (c_L_ref_3 - CL_10_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_10_percent))
+        min_odd_terms_10_percent_error_CL = N_part3(i);
+        CL_10_percent_error = c_L_part3(a);
+        break;
     end
 end
 
-% solve for local angle
-local_angle = atan(dyc_dx);
-
-% solve for x and y upper and lower surfaces of the airfoil
-x_upper = x - y_t.*sin(local_angle);
-x_lower = x + y_t.*sin(local_angle);
-
-y_upper = y_c + y_t.*cos(local_angle);
-y_lower = y_c - y_t.*cos(local_angle);
-
-
-% create vectors for the x and y values of the boundary points clockwise starting from the trailing edge
-x_b = zeros(1,2*N-1);
-y_b = zeros(1,2*N-1);
-for i = 1:N
-    x_b(i) = x_lower((N+1)-i); 
-    y_b(i) = y_lower((N+1)-i); 
-end
-for i = 2:N
-    x_b(N+i-1) = x_upper(i);
-    y_b(N+i-1) = y_upper(i);
-end
-
-% plot airfoil
-if plot_on_off == 1
-    figure;
-    plot(x_b,y_b,'-*','LineWidth',1.5);
-    hold on;
-    axis equal;
-    grid on;
-    if (m == 0)
-        legend('Airfoil Boundary Points', 'Location','best');
-    else
-        plot(x,y_c,'LineWidth',1.5);
-        legend('Airfoil Boundary Points','Mean Camber Line', 'Location','best');
-    end
-    title(title_name);
-    xlabel('Chord Position');
-    ylabel('Thickness');
-end
-
-end
-
-
-
-
-
-function [zero_lift_angle_of_attack,lift_slope_per_degree,cl] = ThinAirfoilTheory(NACA, c, alpha_deg)
-%THINAIRFOILTHEORY solve for cl given angle of attack using thin airfoil theory
-%
-% Author: Shayna Brower
-% Collaborators: Adam Cobb, Luca Lungeanu, Ingrid Paska
-% Date created: 4/8/26  Date revised: 4/8/26
-
-m = NACA(1)/100;
-p = NACA(2)/10;
-
-alpha_rad = deg2rad(alpha_deg);
-
-% symmetric airfoil
-if (m == 0) && (p ==0)
-    zero_lift_angle_of_attack = 0; %degrees
-    cl = 2*pi*alpha_rad;
-    P = polyfit(alpha_deg,cl,1);
-    lift_slope_per_degree = P(1);
-    return;
-end
-
-
-% cambered airfoil
-theta = linspace(0,pi,2000);
-x = (c/2) * (1-cos(theta));
-
-for i = 1:length(x)
-    if (p ~= 0)
-        if (x(i) >= 0) && (x(i) < (p*c))
-            dyc_dx(i) = ((2*m)/(p^2))*(p - (x(i)/c));
-        else
-            dyc_dx(i) = ((2*m)/(1-p)^2)*(p - (x(i)/c));
-        end
+% find number of terms for 1 percent error in CL
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    if (c_L_part3(a) >= (c_L_ref_3 - CL_1_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_1_percent))
+        min_odd_terms_1_percent_error_CL = N_part3(i);
+        CL_1_percent_error = c_L_part3(a);
+        break;
     end
 end
 
-% Thin airfoil theory zero-lift angle in radians
-zero_lift_angle_of_attack_rad = -(1/pi) * trapz(theta, dyc_dx .* (cos(theta) - 1));
-
-% Convert to degrees
-zero_lift_angle_of_attack = rad2deg(zero_lift_angle_of_attack_rad); %degrees
-
-% Build lift curve
-cl = 2*pi*(alpha_rad - zero_lift_angle_of_attack_rad);
-
-% lift slope
-P = polyfit(alpha_deg,cl,1);
-lift_slope_per_degree = P(1);
-
-end
-
-
-
-function [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N)
-%e is the span efficiency factor (to be computed and returned)
-%C_L is the coefficient of lift (to be computed and returned)
-%C_Di is the induced coefficient of drag (to be computed and returned)
-%b is the span (in feet
-%a0_t is the cross-sectional lift slope at the tips (per radian)
-%a0_r is the cross-sectional lift slope at the root (per radian)
-%c_t is the chord at the tips (in feet)
-%c_r is the chord at the root (in feet)
-%aero_t is the zero-lift angle of attack at the tips (in degrees)
-%aero_r is the zero-lift angle of attack at the root (in degrees)
-%geo_t is the geometric angle of attack at the tips (in degrees)
-%geo_r is the geometric angle of attack at the root (in degrees)
-%N is the number of odd terms to include in the series expansion for circulation
-% 
-% Author: Ingrid Paska
-% Collaborators: Adam Cobb, Luca Lungeanu, Shayna Brower
-% Date created: 4/10/26
-
-%calc terms
-S= b*(c_r + c_t)/2;
-AR= b^2/S;
-A_matrix = zeros(N,N);
-RHS = zeros(N,1);
-
-%need be in rad or will interp wrong
-aero_t= (pi/180)*aero_t;
-aero_r= (pi/180)*aero_r;
-geo_t = (pi/180)*geo_t;
-geo_r=(pi/180)*geo_r;
-
-%theta loop for the diff theta
-theta = zeros(N,1);
-for i= 1:N
-    theta(i)= (i*pi)/(2*N);
-end
-
-for i= 1:N
-    frac = cos(theta(i));
-    c=c_r +(c_t-c_r)*frac;
-    a0=a0_r +(a0_t- a0_r)*frac;
-    alp_L0= aero_r+ (aero_t-aero_r)*frac;
-    alp = geo_r +(geo_t-geo_r)*frac;
-    RHS(i)= alp-alp_L0;
-    for j=1:N
-        n=2*j -1;
-        A_matrix(i,j)= (4*b/(a0*c))*sin(n*theta(i))+ n*sin(theta(i)*n)/sin(theta(i));
-
+% find number of terms for 1/10 percent error in CL
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    N_values_part_3_CL(a) = i;
+    if (c_L_part3(a) >= (c_L_ref_3 - CL_1_tenth_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_1_tenth_percent))
+        min_odd_terms_1_tenth_percent_error_CL = N_part3(i);
+        CL_1_tenth_percent_error = c_L_part3(a);
+        break;
     end
-
 end
 
-% Fourier coefficients
-A = A_matrix\RHS;
-
-% Lift coefficient
-c_L= pi*AR*A(1);
-
-% Induced drag coefficient
-sum=0;
-for j =1:N
-    n=2*j -1;
-    sum = sum +n*(A(j)^2);
+% solve for CL and CDi and e iterating by 10 until reference N_ref is reached
+for i = min_odd_terms_1_tenth_percent_error_CL + 10:10:N_ref_part_3
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    N_values_part_3_CL(a) = i;
 end
-c_Di =pi*AR*sum;
 
-% span efficiency factor
-e =(c_L^2)/(pi*AR*c_Di);
 
+
+% solve for CDi error values
+CDi_10_percent = 0.1*c_Di_ref_3;
+CDi_1_percent = 0.01*c_Di_ref_3;
+CDi_1_tenth_percent = 0.001*c_Di_ref_3;
+
+% find number of terms for 10 percent error in CDi
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_10_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_10_percent))
+        min_odd_terms_10_percent_error_CDi = N_part3(i);
+        CDi_10_percent_error = c_Di_part3(a);
+        break;
+    end
 end
+
+% find number of terms for 1 percent error
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_1_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_1_percent))
+        min_odd_terms_1_percent_error_CDi = N_part3(i);
+        CDi_1_percent_error = c_Di_part3(a);
+        break;
+    end
+end
+
+% find number of terms for 1/10 percent error
+a = 0;
+for i= 1:length(N_part3)
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    N_values_part_3_CDi(a) = i;
+    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_1_tenth_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_1_tenth_percent))
+        min_odd_terms_1_tenth_percent_error_Di = N_part3(i);
+        CDi_1_tenth_percent_error = c_Di_part3(a);
+        break;
+    end
+end
+
+% solve for CL and CDi and e iterating by 10 until reference N_ref is reached
+for i = min_odd_terms_1_tenth_percent_error_Di + 10:10:N_ref_part_3
+    a = a+1;
+    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+    N_values_part_3_CDi(a) = i;
+end
+
