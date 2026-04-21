@@ -301,50 +301,30 @@ CL_10_percent = 0.1*c_L_ref_3;
 CL_1_percent = 0.01*c_L_ref_3;
 CL_1_tenth_percent = 0.001*c_L_ref_3;
 
-% find number of terms for 10 percent error in CL
-a = 0;
-for i= 1:length(N_part3)
+% put error values in a vector
+CL_error_values = [CL_10_percent,CL_1_percent,CL_1_tenth_percent];
+
+% find number of terms for 10% error, 1% error and .1% error in CL
+for j = 1:length(CL_error_values)
+    a = 0; %restart counter before for loop
+    for i= 1:length(N_part3)
     a = a+1;
     [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    if (c_L_part3(a) >= (c_L_ref_3 - CL_10_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_10_percent))
-        min_odd_terms_10_percent_error_CL = N_part3(i);
-        CL_10_percent_error = c_L_part3(a);
+    N_values_part_3_CL(a) = i; % store N values for plotting
+    if (c_L_part3(a) >= (c_L_ref_3 - CL_error_values(j))) && (c_L_part3(a) <= (c_L_ref_3 + CL_error_values(j)))
+        min_odd_terms_CL(j) = N_part3(i); % N for 10%, 1%, and .1% error
+        CL_at_min_terms(j) = c_L_part3(a); % CL for 10%, 1%, and .1% error 
         break;
+    end
     end
 end
 
-% find number of terms for 1 percent error in CL
-a = 0;
-for i= 1:length(N_part3)
-    a = a+1;
-    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    if (c_L_part3(a) >= (c_L_ref_3 - CL_1_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_1_percent))
-        min_odd_terms_1_percent_error_CL = N_part3(i);
-        CL_1_percent_error = c_L_part3(a);
-        break;
-    end
-end
-
-% find number of terms for 1/10 percent error in CL
-a = 0;
-for i= 1:length(N_part3)
-    a = a+1;
-    [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    N_values_part_3_CL(a) = i;
-    if (c_L_part3(a) >= (c_L_ref_3 - CL_1_tenth_percent)) && (c_L_part3(a) <= (c_L_ref_3 + CL_1_tenth_percent))
-        min_odd_terms_1_tenth_percent_error_CL = N_part3(i);
-        CL_1_tenth_percent_error = c_L_part3(a);
-        break;
-    end
-end
-
-% solve for CL and CDi and e iterating by 10 until reference N_ref is reached
-for i = min_odd_terms_1_tenth_percent_error_CL + 10:10:N_ref_part_3
+% solve for the remaining CL terms until reference N_ref is reached iterating N by 10
+for i = min_odd_terms_CL(3) + 10:10:N_ref_part_3
     a = a+1;
     [e_3_part3(a),c_L_part3(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
     N_values_part_3_CL(a) = i;
 end
-
 
 
 % solve for CDi error values
@@ -352,72 +332,55 @@ CDi_10_percent = 0.1*c_Di_ref_3;
 CDi_1_percent = 0.01*c_Di_ref_3;
 CDi_1_tenth_percent = 0.001*c_Di_ref_3;
 
-% find number of terms for 10 percent error in CDi
-a = 0;
-for i= 1:length(N_part3)
-    a = a+1;
-    [e_3_part3(a),c_L_part3_CDi(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_10_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_10_percent))
-        min_odd_terms_10_percent_error_CDi = N_part3(i);
-        CDi_10_percent_error = c_Di_part3(a);
-        break;
+CDi_error_values = [CDi_10_percent,CDi_1_percent,CDi_1_tenth_percent];
+
+% find number of terms for 10%, 1%, and .1% error in CDi
+for j = 1:length(CDi_error_values)
+    a = 0; %restart counter before for loop
+    for i= 1:length(N_part3)
+        a = a+1;
+        [e_3_part3(a),c_L_part3_CDi(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
+        N_values_part_3_CDi(a) = i; %store N values for plotting
+        if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_error_values(j))) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_error_values(j)))
+            min_odd_terms_CDi(j) = N_part3(i); % N for 10%, 1%, and .1% error
+            CDi_at_min_terms(j) = c_Di_part3(a); % CDi for 10%, 1%, and .1% error
+            break;
+        end
     end
 end
 
-% find number of terms for 1 percent error
-a = 0;
-for i= 1:length(N_part3)
-    a = a+1;
-    [e_3_part3(a),c_L_part3_CDi(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_1_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_1_percent))
-        min_odd_terms_1_percent_error_CDi = N_part3(i);
-        CDi_1_percent_error = c_Di_part3(a);
-        break;
-    end
-end
 
-% find number of terms for 1/10 percent error
-a = 0;
-for i= 1:length(N_part3)
-    a = a+1;
-    [e_3_part3(a),c_L_part3_CDi(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
-    N_values_part_3_CDi(a) = i;
-    if (c_Di_part3(a) >= (c_Di_ref_3 - CDi_1_tenth_percent)) && (c_Di_part3(a) <= (c_Di_ref_3 + CDi_1_tenth_percent))
-        min_odd_terms_1_tenth_percent_error_CDi = N_part3(i);
-        CDi_1_tenth_percent_error = c_Di_part3(a);
-        break;
-    end
-end
-
-% solve for CL and CDi and e iterating by 10 until reference N_ref is reached
-for i = min_odd_terms_1_tenth_percent_error_CDi + 10:10:N_ref_part_3
+% solve for the remaining CDi terms until reference N_ref is reached iterating N by 10
+for i = min_odd_terms_CDi(3) + 10:10:N_ref_part_3
     a = a+1;
     [e_3_part3(a),c_L_part3_CDi(a),c_Di_part3(a)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_part3(i));
     N_values_part_3_CDi(a) = i;
 end
 
+% plots for deliverable 2
 figure;
 plot(N_values_part_3_CL,c_L_part3,'LineWidth',1.5);
 hold on;
-xline(min_odd_terms_10_percent_error_CL,'r');
-xline(min_odd_terms_1_percent_error_CL,'Color','#33CC33');
-xline(min_odd_terms_1_tenth_percent_error_CL,'k');
+xline(min_odd_terms_CL(1),'r');
+xline(min_odd_terms_CL(2),'Color','#33CC33');
+xline(min_odd_terms_CL(3),'k');
 xlabel('Number of Odd Terms');
 ylabel('Coefficient of Lift');
 title("CL vs. Number of Odd Terms");
-legend('CL','10% error','1% error','1/10% error');
+legend('CL','10% error','1% error','0.1% error');
 xlim([0 200]);
 %print("CL","-dpng",'-r300');
 
 figure;
 plot(N_values_part_3_CDi,c_Di_part3,'LineWidth',1.5);
 hold on;
-xline(min_odd_terms_10_percent_error_CDi,'r');
-xline(min_odd_terms_1_percent_error_CDi,'Color','#33CC33');
-xline(min_odd_terms_1_tenth_percent_error_CDi,'k');
+xline(min_odd_terms_CDi(1),'r');
+xline(min_odd_terms_CDi(2),'Color','#33CC33');
+xline(min_odd_terms_CDi(3),'k');
 xlabel('Number of Odd Terms');
 ylabel('Induced Drag Coefficient');
 title("CDi vs. Number of Odd Terms");
-legend('CDi','10% error','1% error','1/10% error');
+legend('CDi','10% error','1% error','0.1% error');
 xlim([0 200]);
 %print("CDi","-dpng",'-r300');
+
