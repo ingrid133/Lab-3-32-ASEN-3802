@@ -384,3 +384,85 @@ legend('CDi','10% error','1% error','0.1% error');
 xlim([0 200]);
 %print("CDi","-dpng",'-r300');
 
+%% Deliverable 3
+
+% call PLLT with N for .1% error CDi
+[e_del3,c_L_del3,c_Di_del3] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,min_odd_terms_CDi(3));
+
+V = 100*1.68781; %ft/s
+h = 10000; % ft
+rho = 1.7556e-3; % slugs/ft^3
+S = b_3*(cr_3 + ct_3)/2; % ft^2
+q = 0.5*rho*(V^2); % lb/ft^2
+
+% solve for Lift and induced drag
+L = q*S*c_L_del3; % lbf
+Di = q*S*c_Di_del3; % lbf
+
+% solve for cd at aoa = 4 degrees using NACA chart data
+cl_data_0012 = readmatrix('NACA0012_exp.txt');
+cd_data_0012 = readmatrix('NACA0012_cd_data.txt');
+cl_data_2412 = readmatrix('NACA2412_exp.txt');
+cd_data_2412 = readmatrix('NACA2412_cd_data.txt');
+cl_4_0012 = interp1(cl_data_0012(:,1),cl_data_0012(:,2),4);
+cl_4_2412 = interp1(cl_data_2412(:,1),cl_data_2412(:,2),4);
+cd_4_0012 = interp1(cd_data_0012(:,1),cd_data_0012(:,2),cl_4_0012);
+cd_4_2412 = interp1(cd_data_2412(:,1),cd_data_2412(:,2),cl_4_2412);
+
+% solve for average section drag coefficient given 2412 at the root and 0012 at the tip to solve for total drag 
+cd_del3_avg = (cr_3*cd_4_2412 + ct_3*cd_4_0012) / (cr_3 + ct_3);
+
+% solve for total L/D
+CD = c_Di_del3 + cd_del3_avg;
+D = CD*S*q; %lbf
+L_D_efficiency = L/D;
+
+%% Deliverable 4
+
+aoa_del4 = -8:1:8;
+
+% use for loop to solve for CD, CDi, and Cd as angle of attack ranges from -8 to 8 degrees
+for i=1:length(aoa_del4)
+    cl_del4_0012(i) = interp1(cl_data_0012(:,1),cl_data_0012(:,2),aoa_del4(i));
+    cl_del4_2412(i) = interp1(cl_data_2412(:,1),cl_data_2412(:,2),aoa_del4(i));
+    cd_del4_0012(i) = interp1(cd_data_0012(:,1),cd_data_0012(:,2),cl_del4_0012(i));
+    cd_del4_2412(i) = interp1(cd_data_2412(:,1),cd_data_2412(:,2),cl_del4_2412(i));
+    
+    % update geometric angle of attack as aoa changes
+    geo_r_del4(i) = aoa_del4(i) + 1; %degree 
+    geo_t_del4(i) = aoa_del4(i) + 0; %degree 
+    
+    % solve for CDi using PLLT, average cd, and total CD as angle of attack changes
+    [e_del4(i),c_L_del4(i),c_Di_del4(i)] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_del4(i),geo_r_del4(i),min_odd_terms_CDi(3));
+    cd_del4_avg(i) = (cr_3*cd_del4_2412(i) + ct_3*cd_del4_0012(i)) / (cr_3 + ct_3);
+    CD_del4(i) = c_Di_del4(i) + cd_del4_avg(i);
+end
+
+% plot for deliverable 4 
+figure;
+plot(aoa_del4,cd_del4_avg,'LineWidth',1.5);
+hold on;
+plot(aoa_del4,c_Di_del4,'LineWidth',1.5);
+plot(aoa_del4,CD_del4,'LineWidth',1.5);
+xlabel('Angle of Attack (degrees)');
+ylabel('Drag Coefficient');
+legend("Profile drag coefficient",'Induced drag coefficent','Total drag coefficient');
+title('Drag Coefficient vs Angle of Attack');
+print("CD vs aoa","-dpng",'-r300');
+
+
+%% Deliverable 5
+
+% solve for L,D and L/D
+L_del5 = c_L_del4.*q.*S;
+D_del5 = CD_del4.*q.*S;
+L_D_efficiency_del5 = L_del5./D_del5;
+
+% plot for deliverable 5
+figure; 
+plot(aoa_del4,L_D_efficiency_del5,"LineWidth",1.5);
+hold on;
+xlabel('Angle of Attack (degrees)');
+ylabel('Aerodynamic Efficency (L/D)');
+title('L/D vs Angle of Attack');
+print("L_D vs aoa","-dpng","-r300");
