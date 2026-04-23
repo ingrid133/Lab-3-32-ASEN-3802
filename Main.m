@@ -9,7 +9,7 @@ clear;
 clc;
 close all;
 
-%% Task 1
+%% Part 1 Task 1
 
 NACA_0021 = [0,0,21];
 NACA_2421 = [2,4,21];
@@ -22,7 +22,7 @@ N = 51; % 50 panels for each surface
 [x_b_2421,y_b_2421] = NACA_Airfoils(NACA_2421,1,N,'NACA 2421',1);
 %print("NACA_2421","-dpng","-r300");
 
-%% Task 2
+%% Part 1 Task 2
 
 N_ref = 601;
 
@@ -84,7 +84,7 @@ title("Convergence of Predicted Lift Coefficient with Respect to Total Number of
 %print("convergence plot","-dpng","-r300");
 
 
-%% Task 3
+%% Part 1 Task 3
 
 NACA_0006 = [0,0,6];
 NACA_0012 = [0,0,12];
@@ -165,7 +165,7 @@ p_thin_airfoil = polyfit(angle_of_attack,cl_thin_airfoil,1);
 lift_slope_thin_airfoil = p_thin_airfoil(1); % /degree
 
 
-%% Task 4
+%% Part 1 Task 4
 
 NACA_2412 = [2,4,12];
 NACA_4412 = [4,4,12];
@@ -276,7 +276,7 @@ ylabel('\delta');
 legend('AR = 4', 'AR = 6','AR = 8', 'AR = 10',"Location",'best');
 %print('5_20 plot','-dpng','-r300');
 
-%% Part 3
+%% Part 3 Deliverable 1
 
 % givens
 aoa_3 = 4; % degrees
@@ -357,7 +357,9 @@ for i = min_odd_terms_CDi(3) + 10:10:N_ref_part_3
     N_values_part_3_CDi(a) = i;
 end
 
-% plots for deliverable 2
+%% Part 3 deliverable 2
+
+%plot
 figure;
 plot(N_values_part_3_CL,c_L_part3,'LineWidth',1.5);
 hold on;
@@ -368,7 +370,7 @@ xlabel('Number of Odd Terms');
 ylabel('Coefficient of Lift');
 title("CL vs. Number of Odd Terms");
 legend('CL','10% error','1% error','0.1% error');
-xlim([0 200]);
+xlim([0 70]);
 %print("CL","-dpng",'-r300');
 
 figure;
@@ -381,10 +383,10 @@ xlabel('Number of Odd Terms');
 ylabel('Induced Drag Coefficient');
 title("CDi vs. Number of Odd Terms");
 legend('CDi','10% error','1% error','0.1% error');
-xlim([0 200]);
+xlim([0 70]);
 %print("CDi","-dpng",'-r300');
 
-%% Deliverable 3
+%% Part 3 Deliverable 3
 
 % call PLLT with N for .1% error CDi
 [e_del3,c_L_del3,c_Di_del3] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,min_odd_terms_CDi(3));
@@ -417,7 +419,7 @@ CD = c_Di_del3 + cd_del3_avg;
 D = CD*S*q; %lbf
 L_D_efficiency = L/D;
 
-%% Deliverable 4
+%% Part 3 Deliverable 4
 
 aoa_del4 = -8:1:8;
 
@@ -448,10 +450,10 @@ xlabel('Angle of Attack (degrees)');
 ylabel('Drag Coefficient');
 legend("Profile drag coefficient",'Induced drag coefficent','Total drag coefficient');
 title('Drag Coefficient vs Angle of Attack');
-print("CD vs aoa","-dpng",'-r300');
+%print("CD vs aoa","-dpng",'-r300');
 
 
-%% Deliverable 5
+%% Part 3 Deliverable 5
 
 % solve for L,D and L/D
 L_del5 = c_L_del4.*q.*S;
@@ -465,4 +467,4 @@ hold on;
 xlabel('Angle of Attack (degrees)');
 ylabel('Aerodynamic Efficency (L/D)');
 title('L/D vs Angle of Attack');
-print("L_D vs aoa","-dpng","-r300");
+%print("L_D vs aoa","-dpng","-r300");
