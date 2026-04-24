@@ -1,5 +1,7 @@
 %% ASEN 3802 - Aerodynamics Lab - Main
-% Determine effect of thickness and camber on lift 
+% Determine effect of geometry and different conditions on lift using
+% various aerodynamic theories as estimations (Thin Airfoil, Vortex panel,
+% and Prandtl lifting line)
 %
 % Author: Shayna Brower
 % Collaborators: Adam Cobb, Luca Lungeanu, Ingrid Paska
@@ -296,6 +298,11 @@ N_part3 = 1:1:N_ref_part_3;
 % solve for CL and CDi at a large N for reference for convergence study
 [e_3_ref_3,c_L_ref_3,c_Di_ref_3] = PLLT(b_3,a0_t_3,a0_r_3,ct_3,cr_3,aero_t_3,aero_r_3,geo_t_3,geo_r_3,N_ref_part_3);
 
+% display exact CL an CDi values in command window
+disp(' ');
+disp(['Part 3 Exact CL for convergence = ', num2str(c_L_ref_3)]);
+disp(['Part 3 Exact CDi for convergence = ', num2str(c_Di_ref_3)]);
+
 % solve for CL error values
 CL_10_percent = 0.1*c_L_ref_3;
 CL_1_percent = 0.01*c_L_ref_3;
@@ -318,6 +325,13 @@ for j = 1:length(CL_error_values)
     end
     end
 end
+
+% display min odd terms and CL value for 10, 1 and .1% error
+disp(' ');
+disp(['For 10% error in CL, N = ', num2str(min_odd_terms_CL(1)), ', CL = ', num2str(CL_at_min_terms(1))]);
+disp(['For 1% error in CL, N = ', num2str(min_odd_terms_CL(2)), ', CL = ', num2str(CL_at_min_terms(2))]);
+disp(['For 0.1% error in CL, N = ', num2str(min_odd_terms_CL(3)), ', CL = ', num2str(CL_at_min_terms(3))]);
+
 
 % solve for the remaining CL terms until reference N_ref is reached iterating N by 10
 for i = min_odd_terms_CL(3) + 10:10:N_ref_part_3
@@ -349,6 +363,11 @@ for j = 1:length(CDi_error_values)
     end
 end
 
+% display min odd terms and CDi value for 10, 1 and .1% error
+disp(' ');
+disp(['For 10% error in CDi, N = ', num2str(min_odd_terms_CDi(1)), ', CDi = ', num2str(CDi_at_min_terms(1))]);
+disp(['For 1% error in CDi, N = ', num2str(min_odd_terms_CDi(2)), ', CDi = ', num2str(CDi_at_min_terms(2))]);
+disp(['For 0.1% error in CDi, N = ', num2str(min_odd_terms_CDi(3)), ', CDi = ', num2str(CDi_at_min_terms(3))]);
 
 % solve for the remaining CDi terms until reference N_ref is reached iterating N by 10
 for i = min_odd_terms_CDi(3) + 10:10:N_ref_part_3
@@ -416,6 +435,15 @@ cd_del3_avg = (cr_3*cd_4_2412 + ct_3*cd_4_0012) / (cr_3 + ct_3);
 CD = c_Di_del3 + cd_del3_avg;
 D = CD*S*q; %lbf
 L_D_efficiency = L/D;
+
+% display table values for deliverable 3
+disp(' ');
+disp('Deliverable 3: Cruise condition results at V = 100 knots, h = 10,000 ft');
+disp(['Lift, L = ', num2str(L), ' lbf']);
+disp(['Induced Drag, Di = ', num2str(Di), ' lbf']);
+disp(['Total Drag, D = ', num2str(D), ' lbf']);
+disp(['L/D_total = ', num2str(L_D_efficiency)]);
+
 
 %% Part 3 Deliverable 4
 
