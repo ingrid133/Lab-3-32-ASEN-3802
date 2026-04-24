@@ -126,7 +126,7 @@ plot(data_0006(:,1),data_0006(:,2),'--om');
 plot(angle_of_attack,cl_0012_task3,'LineWidth',1.2,'Color','c');
 plot(data_0012(:,1),data_0012(:,2),'--oc');
 plot(angle_of_attack,cl_0018,'LineWidth',1,'Color','y');
-plot(angle_of_attack,cl_thin_airfoil,'--w','LineWidth',1.2);
+plot(angle_of_attack,cl_thin_airfoil,'--k','LineWidth',1.2);
 grid on;
 legend("NACA 0006 Vortex Panel","NACA 0006 Experimental","NACA 0012 Vortex Panel","NACA 0012 Experimental","NACA 0018 Vortex Panel","Thin Airfoil Theory","Location","southeast");
 xlabel("Angle of Attack (degrees)");
@@ -283,8 +283,8 @@ aoa_3 = 4; % degrees
 b_3 = 400/12; %ft
 cr_3 = 64/12; %ft
 ct_3 = 44.5/12; %ft
-geo_r_3 = aoa_3 + 1; %degree 
-geo_t_3 = aoa_3 + 0; %degree 
+geo_r_3 = aoa_3 + 1; %degrees 
+geo_t_3 = aoa_3 + 0; %degrees 
 a0_r_3 = (lift_slope_vortex_2412*180)/pi; % /rad NACA 2412
 a0_t_3 = (lift_slope_vortex_0012*180)/pi; % /rad NACA 0012
 aero_r_3 = zero_lift_aoa_vortex_2412;  % deg NACA 2412
@@ -361,29 +361,27 @@ end
 
 %plot
 figure;
-plot(N_values_part_3_CL,c_L_part3,'LineWidth',1.5);
+semilogx(N_values_part_3_CL,c_L_part3,'LineWidth',1.5);
 hold on;
 xline(min_odd_terms_CL(1),'r');
-xline(min_odd_terms_CL(2),'Color','#33CC33');
+xline(min_odd_terms_CL(2),'Color','#4B0082');
 xline(min_odd_terms_CL(3),'k');
 xlabel('Number of Odd Terms');
 ylabel('Coefficient of Lift');
 title("CL vs. Number of Odd Terms");
 legend('CL','10% error','1% error','0.1% error');
-xlim([0 70]);
 %print("CL","-dpng",'-r300');
 
 figure;
-plot(N_values_part_3_CDi,c_Di_part3,'LineWidth',1.5);
+semilogx(N_values_part_3_CDi,c_Di_part3,'LineWidth',1.5);
 hold on;
 xline(min_odd_terms_CDi(1),'r');
-xline(min_odd_terms_CDi(2),'Color','#33CC33');
+xline(min_odd_terms_CDi(2),'Color','#4B0082');
 xline(min_odd_terms_CDi(3),'k');
 xlabel('Number of Odd Terms');
 ylabel('Induced Drag Coefficient');
 title("CDi vs. Number of Odd Terms");
 legend('CDi','10% error','1% error','0.1% error');
-xlim([0 70]);
 %print("CDi","-dpng",'-r300');
 
 %% Part 3 Deliverable 3
